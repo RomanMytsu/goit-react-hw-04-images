@@ -5,20 +5,26 @@ import { ModalItem, Overlay } from './Modal.styled';
 const modalRoot = document.getElementById('modal-root');
 
 export const Modal = ({ close, item }) => {
-  const closeModal = ({ target, currentTarget, code }) => {
-    if (target === currentTarget || code === 'Escape') {
+  const backdropCloseHandler = ({ target, currentTarget }) => {
+    if (target === currentTarget) {
       close();
     }
   };
 
   useEffect(() => {
-    document.addEventListener('keydown', closeModal);
+    const closeEscapeHandler = ({ code }) => {
+      if (code === 'Escape') {
+        close();
+      }
+    };
 
-    return () => document.removeEventListener('keydown', closeModal);
-  }, []);
+    document.addEventListener('keydown', closeEscapeHandler);
+
+    return () => document.removeEventListener('keydown', closeEscapeHandler);
+  }, [close]);
 
   return createPortal(
-    <Overlay onClick={closeModal}>
+    <Overlay onClick={backdropCloseHandler}>
       <ModalItem>
         <img src={item.largeImageURL} alt={item.tags} />
       </ModalItem>
